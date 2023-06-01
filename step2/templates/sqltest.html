@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    table,th,td{
+        border: 1px inset rgb(93, 84, 121);
+        background-color: teal;
+        accent-color: auto;
+        }
+</style>
+<meta charset="UTF-8">
+<title>회원관리</title>
+
+</head>
+
+<body>
+
+<table>
+    <tr>
+        <th>선수id</th>
+        <th>선수이름</th>
+    </tr>
+        {% for row in result_table%}
+        <tr>
+            <td>{{row.player_id}}</td>
+            <td>{{row.player_name}}</td>
+            <td><button onClick="locatoin.href='/detail?id={{row.player_id}}&name={{row.player_name}}'">상세정보</button></td>
+        </tr>
+        {% endfor %}
+</table>
+</body>
+</html>
