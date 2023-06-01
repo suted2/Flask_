@@ -4,7 +4,7 @@ from flask import Flask, render_template
 from flask import request
 # Flask 객체 인스턴스 생성
 
-app = Flask(__name__)
+app = Flask(__name__) 
 
 @app.route('/main') # 접속하는 url 바인딩 .
 def index():
@@ -16,7 +16,7 @@ def index():
     return render_template('index.html') 
 
 @app.route('/test')
-def testget():
+def testget(): #함수의 이름의 경우에는 자유롭게 지정할 수 있다. 
 
     return render_template('posttest.html')
 
