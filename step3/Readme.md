@@ -83,4 +83,59 @@ def login():
 
 #### Flow 3. 아이디가 애초에 없다면 회원가입을 시도해야 한다. 
 
+![회원가입 화면](https://github.com/suted2/Flask_/assets/101646531/8a5454a8-56e7-481f-aa58-84dc08da4596)
+
+```html
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>회원가입</title>
+    </head>
+
+    <body>
+        <div style ="text-align: center;">
+        <h1> 회원가입</h1>
+            <form action ='signup_add' method ="post">  <!--회원 가입을 위한 정보를 기입하는 장소이다.  -->
+                <input type="text" name = 'id' placeholder="아이디"> <br> 
+                <input type="password" name = 'pwd' placeholder="비밀번호"> <br>
+                <input type="text" name = 'name' placeholder="이름"> <br>
+                <input type="text" name = 'email' placeholder="이메일"> <br>
+
+                <input type="submit" value ='회원가입' onclick="alert('회원 가입 완료')">  <!--정보를 전부 기입하고 회원가입을 눌렀을때 알림창을 준다. -->
+            </form>
+    </body>
+</html>
+
+```
+
+
+```python 
+
+@app.route('/signup_add', methods=['POST'])
+def signup_add(): # 위의 html 화면에서 입력한 정보를 더하고 
+    id_ = request.form['id']
+    pwd = request.form['pwd']
+    name = request.form['name']
+    email = request.form['email']
+
+
+    if id != '' and pwd != '' and name != '' and email != '':
+
+        cursor = db_conn.cursor()
+
+        query = "insert into User_info (user_id, user_pwd, user_name, user_email) values ('{}', '{}', '{}', '{}')".format(id_, pwd, name, email)
+
+        cursor.execute(query)
+        db_conn.commit()
+        return render_template('main.html')
+
+    else:
+        flash("You need to fill all info")
+        return render_template('signup.html')
+
+```
+
+
+
+
 
