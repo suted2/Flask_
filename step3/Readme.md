@@ -377,3 +377,5 @@ list(cursor)의 마지막 num을 가지고 와서 +1 하는 방식으로 수정�
 ### img, 동영상 넘기기 
 
 1. 기본적으로 image, video , css, 등등의 경우는 static / 함수 아래 적용하고 keep을 했다. 
+2. stactic 의 경우 처음 객체를 생성하는 시점에 app = Flask(__name__) 에 폴더명을 지정해주어도 된다. -> defalut 값인 static 으로 만들었다면 선택 사항이 된다.  
+3. <img src ="{{ url_for('static', filename = '원하는 사진 이름( 경로까지 ) ')}}" width="300" height="300"> 이미지라명 해당 과정처럼
