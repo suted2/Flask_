@@ -321,4 +321,59 @@ def notice_board_fix():
 
 
 
+---
 
+```python
+def notice_board_add_check():
+    global name
+    title = request.form['title']
+    string = request.form['content']
+
+    if title != '' and string != '':
+        cursor = db_conn.cursor()
+
+        query = 'select * from content'
+        cursor.execute(query)
+        for i in cursor:
+            num = i[0]
+        query1 = "insert into content (content_id, user_id, content_title, content_string) values ('{}', '{}', '{}', '{}')".format(num+1, name ,title, string)
+
+        cursor.execute(query1)
+        db_conn.commit()
+
+        cursor = db_conn.cursor()
+
+        query2 = 'select * from content'
+        cursor.execute(query2)
+
+        result = []
+        for i in cursor:
+            temp = {'content_id' : i[0], 'user_id': i[1],  'content_title' : i[2],  'content_string' : i[3]}
+            result.append(temp)
+
+        return render_template('notice_board.html', result_table = result)
+    else:
+        flash("You need to fill all info")
+        return render_template('add.html')
+
+
+```
+
+
+게시글을 추가하기 위한 글 
+
+🤔 Discussion 
+
+1. Login ID의 경우 session으로 관리하지만 해당 과정에 대한 진도는 나가지 않아. 
+일단 get으로 넘기기 보다는 python 파일에서 전역변수를 사용하여 해당 전역변수에서 id를 저장하고 게시글에 쓸때까지 가져온다. 
+
+2. 게시판 NUm을 유지하기 위해 가장 먼저는 len(list(cursor))를 통해 현재 게시글의 숫자를 count했지만 이럴경우 삭제가 일어나면 오류가 생긴다 따라서 해당 함수를 
+list(cursor)의 마지막 num을 가지고 와서 +1 하는 방식으로 수정하여 해결 할 수 있었다. 
+
+
+
+----
+
+### img, 동영상 넘기기 
+
+1. 기본적으로 image, video , css, 등등의 경우는 static / 함수 아래 적용하고 keep을 했다. 
