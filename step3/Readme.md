@@ -137,5 +137,188 @@ def signup_add(): # 위의 html 화면에서 입력한 정보를 더하고
 
 
 
+#### Flow 4. 게시판 목록에서 자세히 보기 / 수정할 수 있는 양식을 만든다.  
+
+![게시글 목록](https://github.com/suted2/Flask_/assets/101646531/03b0eb44-9e96-424d-9e4c-8ae19bf8a553)
+
+
+```html
+<body>
+
+<!-- 게시글 작성-->
+<div style ="text-align: center;">
+
+    <h3>게시글 작성</h3>
+    <button onClick="location.href='/notice_board_add'">게시글 작성</button> <!--게시글 작성을 위한  추가 버튼생성-->
+    </div>
+
+
+<table>
+    <tr>
+        <th>Num</th>
+        <th>게시물 제목</th>
+        <th>유저번호</th>
+    </tr>
+        {% for row in result_table%}
+        <tr>
+            <td>{{row.content_id}}</td>
+            <td>{{row.content_title}}</td>
+            <td>{{row.user_id}}</td>
+            <td><button onClick="location.href='/notice_board_detail?content_id={{row.content_id}}'">상세보기</button></td>
+            <td><button onClick="location.href='/notice_board_delete?content_id={{row.content_id}}'">삭제</button></td>
+
+        </tr>
+        {% endfor %}
+</table>
+
+```
+
+
+
+
+```python
+@app.route('/notice_board_delete')
+def notice_board_delete():
+    temp = request.args.get('content_id')
+
+    cursor = db_conn.cursor()
+
+    query = "delete from content where content_id = {}".format(temp)
+
+    cursor.execute(query)
+    db_conn.commit()
+    cursor = db_conn.cursor()
+
+    query = 'select * from content'
+    cursor.execute(query)
+
+    result = []
+    for i in cursor:
+        temp = {'content_id' : i[0], 'user_id': i[1],  'content_title' : i[2],  'content_string' : i[3]}
+        result.append(temp)
+
+
+    return render_template('notice_board.html', result_table = result)
+
+
+```
+
+
+
+
+
+
+#### Flow 4-2. 게시판 상세 보기 확인 
+
+![](https://github.com/suted2/Flask_/assets/101646531/de5fce33-ad2e-427e-b6a9-bc905f6f2761)
+
+
+```html
+<!DOCTYPE html>
+
+<html>
+<head>
+<style>
+table, th, td, tr{
+    border : 1px solid black
+}
+</style>
+<meta charset="UTF-8">
+<title>게시물 상세읽기</title>
+</head>
+
+<body>
+<table>
+    <tr>   <!--원하는 정보를 표현하기 위한 테이블 생성--> 
+        <th>게시판 번호</th>
+        <th>유저 id</th>
+        <th>게시물 제목</th>
+        <th>게시글 내용</th>
+    </tr>
+
+        {% for row in result_table%}
+        <tr>
+            <td>{{row.content_id}}</td>
+            <td>{{row.user_id}}</td>
+            <td>{{row.content_title}}</td>
+            <td>{{row.content_string}}</td>
+
+        </tr>
+        {% endfor %}
+</table>
+
+
+<h2>게시글 수정</h2> <!--수정을 위한 테이블 만들기 .-->
+<table>
+    <tr>
+        <th>게시물 번호</th>
+        <th>게시글 제목</th>
+        <th>게시글 내용</th>
+        <th>    </th>
+
+    </tr>
+
+    {% for row in result_table%}
+    
+    
+    <form action="/update?content_id={{row.content_id}}" method="post"> <!--수정을 누르는 순간 /update가 발동된다. -->
+        <tr>
+            <td>{{row.content_id}}</td>
+            <td><input type="text" name="content_title"></input></td>
+            <td><input type="text" name="content_string"></input></td>
+            <td><input type="submit" value="수정"></input></td>
+        </tr>
+    </form>
+    {% endfor %}
+</table>
+
+<h3>원래 페이지로</h3>
+<button onClick="location.href='/notice_board'">돌아가기</button>
+
+<img src ="{{ url_for('static', filename = 'IMG/puppy.jpg')}}" width="300" height="300"> <!--원래 게시글로 돌아가기 위한 버튼을 제공한다.-->
+
+
+
+</body>
+</html>
+
+```
+
+```python
+
+@app.route('/update', methods = ['POST'])
+def notice_board_fix():
+    temp = request.args.get('content_id') # 현재 수정하려고 하는 게시글의 id를 받아옴
+
+    content_tit = request.form['content_title'] # 수정하려고 하는 제목 
+    content_str = request.form['content_string'] # 수정하려고 하는 게시글 내용
+
+    if content_tit != '': # 게시글 제목을 변경하겠다 ! 
+        cursor = db_conn.cursor()
+        query = "update content set content_title = '{}' where content_id like '{}'".format(content_tit, temp)
+        cursor.execute(query)
+
+    if content_str != '':
+
+        cursor = db_conn.cursor()
+        query = "update content set content_string = '{}' where content_id like '{}'".format(content_str, temp)
+        cursor.execute(query) 
+
+    cursor = db_conn.cursor()
+
+    query = "select * from content where content_id like '{}'".format(temp)
+
+    cursor.execute(query)
+    
+    result = []
+    for i in cursor:
+        temp = {'content_id' : i[0], 'user_id': i[1],  'content_title' : i[2],  'content_string' : i[3]}
+        result.append(temp)
+
+    return render_template('detail.html', result_table = result)
+
+```
+
+
 
 
